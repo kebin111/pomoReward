@@ -2,12 +2,18 @@
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
-  let navItems = ["Chill", "Puzzle", "BRAINROT"];
+  let navItems = ["Chill", "Puzzle", "BRAINROT", "Normal"];
 
   //timer 
-  let minutes = 25;
+
+  let workMin = 25;
+  let breakMin = 5;
+  let minutes = workMin;
   let seconds = 0;
+
   let timerRunning = false;
+  let breakTime = false;
+  
   let interval;
 
   function startTimer() {
@@ -18,6 +24,14 @@
       if (minutes === 0 && seconds === 0) {
         clearInterval(interval);
         timerRunning = false;
+        
+        if(!breakTime){
+          breakTime = true;
+          minutes = breakMin;
+          seconds = 0;
+        }else{
+          resetTimer();
+        }
         return;
       }
 
@@ -28,6 +42,22 @@
         seconds--;
       }
     }, 1000);
+  }
+
+  function startBreakTime(){
+    breakTime = true;
+    minutes = breakMin;
+    seconds = 0;
+    startTimer();
+  }
+
+  function pauseTimer() {
+    if (!timerRunning) return;
+
+    clearInterval(interval);
+    timerRunning = false;
+    return;
+
   }
 
   function resetTimer() {
@@ -44,7 +74,41 @@
 
 <main>
 
-  <div class="nav-class">
+  <!-- From Uiverse.io by SelfMadeSystem --> 
+<div class="nav">
+  <div class="container">
+     {#each navItems as item}
+          <!-- <li><a href="#">{item}</a></li> -->
+           <div class="btn">{item}</div>
+        {/each}
+    <!-- <div class="btn">Home</div>
+    <div class="btn">Contact</div>
+    <div class="btn">About</div>
+    <div class="btn">FAQ</div> -->
+    <svg
+      class="outline"
+      overflow="visible"
+      width="400"
+      height="60"
+      viewBox="0 0 400 60"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        class="rect"
+        pathLength="100"
+        x="0"
+        y="0"
+        width="400"
+        height="60"
+        fill="transparent"
+        stroke-width="5"
+      ></rect>
+    </svg>
+  </div>
+</div>
+
+
+  <!-- <div class="nav-class">
     <nav>
       <ul>
         {#each navItems as item}
@@ -52,12 +116,17 @@
         {/each}
       </ul>
     </nav>
-  </div>
+  </div> -->
 
    <div class="timer-hero">
       <div class="timer-box">
         <h1>{formattedTime}</h1>
+        {#if !timerRunning}
         <button class="start-button" on:click={startTimer}>Start</button>
+        {:else}
+        <button class="start-button" on:click={pauseTimer}>Pause</button>
+        {/if}
+
         <button class="reset-button" on:click={resetTimer}>Reset</button>
       </div>
   </div>
@@ -82,17 +151,26 @@ main{
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
   .nav-class{
-    background-color: rgb(107, 107, 107);
+    background-color: rgb(255, 255, 255);
     min-width: 50rem;
     
   } 
 
-  nav{
+  nav{ 
     padding: 1rem 2rem;
-   
   }
+
+   .nav-class li a {
+    color: black; /* 🔹 Change this to any color you want */
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: color 0.2s ease;
+  }
+
 
   ul{
     display: flex;
@@ -101,20 +179,23 @@ main{
     margin: 0;
     padding: 0;
     justify-content: center;
+    color: black;
   }
 
-
+ 
   .timer-hero{
     display: flex;
-    background-color: red;    
+    background-color: rgb(78, 78, 78);    
     justify-content: center;  
     align-items: center;  
     min-height: 25rem;
     max-height: 50rem;
+    width: 100%;
   }
 
   .timer-box{
-    background-color:rgb(22, 0, 117); 
+    background-color:rgb(255, 255, 255); 
+    color: black;
     min-width: 25rem;
     max-width: 25rem;
     min-height: 10rem;
@@ -135,4 +216,89 @@ main{
     color: white;
     border-radius: 1rem;
   }
+
+
+
+
+
+
+
+
+
+
+  /* From Uiverse.io by SelfMadeSystem */ 
+.outline {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.rect {
+  stroke-dashoffset: 5;
+  stroke-dasharray: 0 0 10 40 10 40;
+  transition: 0.5s;
+  stroke: #000000;
+}
+
+.nav {
+  position: relative;
+  width: 400px;
+  height: 60px;
+}
+
+.container:hover .outline .rect {
+  transition: 999999s;
+  /* Must specify these values here as something *different* just so that the transition works properly */
+  stroke-dashoffset: 1;
+  stroke-dasharray: 0;
+}
+
+.container {
+  position: absolute;
+  inset: 0;
+  background: rgb(255, 255, 255);    
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0.5em;
+}
+
+.btn {
+  padding: 0.5em 1.5em;
+  color: #000000;
+  cursor: pointer;
+  transition: 0.1s;
+}
+
+.btn:hover {
+  background: #fff3;
+}
+
+.btn:nth-child(1):hover ~ svg .rect {
+  stroke-dashoffset: 0;
+  stroke-dasharray: 0 2 8 73.3 8 10.7;
+}
+
+.btn:nth-child(2):hover ~ svg .rect {
+  stroke-dashoffset: 0;
+  stroke-dasharray: 0 12.6 9.5 49.3 9.5 31.6;
+}
+
+.btn:nth-child(3):hover ~ svg .rect {
+  stroke-dashoffset: 0;
+  stroke-dasharray: 0 24.5 8.5 27.5 8.5 55.5;
+}
+
+.btn:nth-child(4):hover ~ svg .rect {
+  stroke-dashoffset: 0;
+  stroke-dasharray: 0 34.7 6.9 10.2 6.9 76;
+}
+
+.btn:hover ~ .outline .rect {
+  stroke-dashoffset: 0;
+  stroke-dasharray: 0 0 10 40 10 40;
+  transition: 0.5s !important;
+}
+
 </style>
