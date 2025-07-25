@@ -6,8 +6,8 @@
 
   //timer 
 
-  let workMin = 25;
-  let breakMin = 5;
+  let workMin = 1;
+  let breakMin = 5; 
   let minutes = workMin;
   let seconds = 0;
 
@@ -16,6 +16,14 @@
   
   let interval;
 
+  let modes = ["Normal Mode", "Chill Mode", "Puzzle Mode", "Brainrot Mode"];
+  let mode = "Normal Mode"
+
+  let t_hero_color = '#4E4E64'; 
+
+  let showModal = false;
+  let claimReward = false;
+  //TIMER FUNCTIONS
   function startTimer() {
     if (timerRunning) return;
     timerRunning = true;
@@ -29,8 +37,10 @@
           breakTime = true;
           minutes = breakMin;
           seconds = 0;
+          showRewardButton();
         }else{
           resetTimer();
+          closeModal();
         }
         return;
       }
@@ -44,12 +54,6 @@
     }, 1000);
   }
 
-  function startBreakTime(){
-    breakTime = true;
-    minutes = breakMin;
-    seconds = 0;
-    startTimer();
-  }
 
   function pauseTimer() {
     if (!timerRunning) return;
@@ -70,6 +74,52 @@
    // Format with leading zero
   $: formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
+  // PAGE CHANGE FUNCTIONS
+  function normalMode(){
+     //change page colors
+    t_hero_color = '#4E4E64'
+    //change text
+    mode = "Normal Mode ✅"
+  }
+  function brainrotMode(){
+    //change page colors
+    t_hero_color = '#FF2300'
+    //change text
+    mode = "BRAINROT Mode 💀"
+  }
+
+  function handleClick(item){
+    switch(item){
+      case "Normal":
+        normalMode();
+        break;
+      case "Chill":
+        break;
+      case "Puzzle":
+        break;
+      case "BRAINROT":
+        brainrotMode();
+        break;
+    }
+  }
+
+  //MODAL FUNCTIONS
+
+  function openModal(){
+    showModal = true;
+  }
+
+  function closeModal(){
+    showModal = false;
+  }
+
+  function showRewardButton(){
+    claimReward = true;
+  }
+
+   function hideRewardButton(){
+    claimReward = false;
+  }
 </script>
 
 <main>
@@ -79,7 +129,7 @@
   <div class="container">
      {#each navItems as item}
           <!-- <li><a href="#">{item}</a></li> -->
-           <div class="btn">{item}</div>
+           <div class="btn" on:click={() => handleClick(item)}>{item}</div>
         {/each}
     <!-- <div class="btn">Home</div>
     <div class="btn">Contact</div>
@@ -118,7 +168,8 @@
     </nav>
   </div> -->
 
-   <div class="timer-hero">
+   <div class="timer-hero" style="background-color: {t_hero_color}">
+      <h2>{mode}</h2>
       <div class="timer-box">
         <h1>{formattedTime}</h1>
         {#if !timerRunning}
@@ -128,13 +179,32 @@
         {/if}
 
         <button class="reset-button" on:click={resetTimer}>Reset</button>
+
+        {#if claimReward}
+        <button class="reward-button" on:click={() => {
+          openModal();
+          hideRewardButton();
+          startTimer();
+        }}>Claim Reward!</button>
+        {/if}
       </div>
   </div>
+
+  {#if showModal}
+    <div class="modal-backdrop" on:click={closeModal}>
+      <div class="modal-content" on:click|stopPropagation>
+        <h2>REWARD</h2>
+        <p>Congratulations! you get 5 minutes of REELS</p>
+        <button on:click={closeModal}>Close</button>
+      </div>
+    </div>
+  {/if}
 </main>
 
 <style>
   :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; */
+  font-family: 'Chillax', sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -163,7 +233,7 @@ main{
     padding: 1rem 2rem;
   }
 
-   .nav-class li a {
+  .nav-class li a {
     color: black; /* 🔹 Change this to any color you want */
     text-decoration: none;
     font-weight: bold;
@@ -185,12 +255,17 @@ main{
  
   .timer-hero{
     display: flex;
-    background-color: rgb(78, 78, 78);    
+    flex-direction: column;
+    /* background-color: rgb(78, 78, 78);     */
     justify-content: center;  
     align-items: center;  
     min-height: 25rem;
     max-height: 50rem;
     width: 100%;
+  }
+
+  .timer-hero h2{
+    font-weight: 500;
   }
 
   .timer-box{
@@ -199,12 +274,15 @@ main{
     min-width: 25rem;
     max-width: 25rem;
     min-height: 10rem;
-    max-height: 10rem;
+    max-height: 15rem;  
     text-align: center;
     padding: 2rem;
     border-radius: 1rem;
+    font-size: 2rem;  
+    padding: 1rem;
   } 
 
+ 
   .start-button{  
     background-color: black;
     color: white;
@@ -217,12 +295,11 @@ main{
     border-radius: 1rem;
   }
 
-
-
-
-
-
-
+  .reward-button{  
+    background-color: rgb(25, 148, 0);
+    color: white;
+    border-radius: 1rem;
+  }
 
 
 
