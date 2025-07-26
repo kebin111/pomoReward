@@ -2,6 +2,9 @@
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
+
+  import { onMount, tick, onDestroy } from 'svelte';
+
   let navItems = ["Chill", "Puzzle", "BRAINROT", "Normal"];
 
   //timer 
@@ -23,6 +26,11 @@
 
   let showModal = false;
   let claimReward = false;
+
+  let player;
+  let player_v = 'hidden';
+
+  let ytReady = false;
   //TIMER FUNCTIONS
   function startTimer() {
     if (timerRunning) return;
@@ -41,6 +49,7 @@
         }else{
           resetTimer();
           closeModal();
+          hidePlayer();
         }
         return;
       }
@@ -105,8 +114,53 @@
 
   //MODAL FUNCTIONS
 
-  function openModal(){
+
+//   function onYouTubeIframeAPIReady() {
+//   // player = new YT.Player('player', {
+//   //   height: '360',
+//   //   width: '640',
+//   //   videoId: 'ZVvya99OtnQ'
+//   // });
+//   console.log("YouTube API Ready!");
+//   window.ytApiReady = true;
+// }
+
+  onMount(() => {
+    // Define the global callback BEFORE loading the script
+    window.onYouTubeIframeAPIReady = () => {
+      console.log("YouTube API ready");
+      ytReady = true;
+     
+    };
+
+    // Now add the script
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.body.appendChild(tag);
+  });
+
+  onDestroy(() => {
+    if (player) {
+      player.destroy();
+      player = null;
+    }
+  });
+  
+  async function openModal(){
     showModal = true;
+    await tick();
+    if (ytReady && !player) {
+      player = new YT.Player('player', {
+        height: '640',
+        width: '360',
+        videoId: 'ZVvya99OtnQ'
+      });
+    } else if(player){
+      player.playVideo();
+    } else {
+      if (player) player.pauseVideo();
+    }
+
   }
 
   function closeModal(){
@@ -119,6 +173,25 @@
 
    function hideRewardButton(){
     claimReward = false;
+  }
+
+  function displayPlayer(){
+    player_v = 'visible';
+  }
+
+  function hidePlayer(){
+    player_v = 'hidden';
+  }
+  function pauseVideo(){
+    if (player){
+      player.pauseVideo();
+    }
+  }
+
+  function playVideo(){
+    if (player){
+      player.playVideo();
+    }
   }
 </script>
 
@@ -185,6 +258,7 @@
           openModal();
           hideRewardButton();
           startTimer();
+          displayPlayer();
         }}>Claim Reward!</button>
         {/if}
       </div>
@@ -195,10 +269,16 @@
       <div class="modal-content" on:click|stopPropagation>
         <h2>REWARD</h2>
         <p>Congratulations! you get 5 minutes of REELS</p>
-        <button on:click={closeModal}>Close</button>
+        <button on:click={() => {
+          hidePlayer();
+          closeModal();}}>Close</button>
+          <div id="player" >words</div>
       </div>
     </div>
   {/if}
+
+
+  
 </main>
 
 <style>
@@ -378,4 +458,7 @@ main{
   transition: 0.5s !important;
 }
 
+
 </style>
+
+
