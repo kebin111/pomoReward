@@ -31,6 +31,11 @@
   let player_v = 'hidden';
 
   let ytReady = false;
+
+  let playlistLength;
+  let index;
+
+  let restrict = false;
   //TIMER FUNCTIONS
   function startTimer() {
     if (timerRunning) return;
@@ -115,16 +120,6 @@
   //MODAL FUNCTIONS
 
 
-//   function onYouTubeIframeAPIReady() {
-//   // player = new YT.Player('player', {
-//   //   height: '360',
-//   //   width: '640',
-//   //   videoId: 'ZVvya99OtnQ'
-//   // });
-//   console.log("YouTube API Ready!");
-//   window.ytApiReady = true;
-// }
-
   onMount(() => {
     // Define the global callback BEFORE loading the script
     window.onYouTubeIframeAPIReady = () => {
@@ -145,16 +140,68 @@
       player = null;
     }
   });
-  
+
+  function reloadPlayer(){
+    if (player) {
+      player.destroy();
+      player = null;
+    }
+     player = new YT.Player('player', {
+        height: '640',
+        width: '360',
+        playerVars: {
+          listType: 'playlist',
+          list: 'PL3RN74kSDDcibI-VWFrYvjI_F4asqPjYV', 
+          index: index,
+          autoplay: 1,
+          mute: 1,
+          controls: 1,
+          loop: 1,
+          playlist: 'PL3RN74kSDDcibI-VWFrYvjI_F4asqPjYV'
+        },
+         events: {
+          onReady: () => {
+            player.setShuffle(true);
+            player.shufflePlaylist();
+          }
+    
+        }
+      });
+    
+  }
+
   async function openModal(){
+    playlistLength = 202;
+    index = Math.floor(Math.random() * playlistLength);
     showModal = true;
     await tick();
     if (ytReady && !player) {
       player = new YT.Player('player', {
         height: '640',
         width: '360',
-        videoId: 'ZVvya99OtnQ'
+        playerVars: {
+          listType: 'playlist',
+          list: 'PL3RN74kSDDcibI-VWFrYvjI_F4asqPjYV', 
+          index: index,
+          autoplay: 1,
+          mute: 1,
+          controls: 1,
+          loop: 1,
+          playlist: 'PL3RN74kSDDcibI-VWFrYvjI_F4asqPjYV'
+        },
+         events: {
+          onReady: () => {
+            player.setShuffle(true);
+            player.shufflePlaylist();
+          },
+          onError: (event) => {
+            console.warn('Player error, reloading...');
+            reloadPlayer();
+          }
+        }
       });
+
+      
     } else if(player){
       player.playVideo();
     } else {
@@ -165,6 +212,11 @@
 
   function closeModal(){
     showModal = false;
+
+    if (player) {
+    player.destroy();
+    player = null;
+  }
   }
 
   function showRewardButton(){
@@ -192,6 +244,14 @@
     if (player){
       player.playVideo();
     }
+  }
+
+  function restrictVideo(){
+    restrict = true;
+  }
+
+  function unrestrictVideo(){
+    restrict = false;
   }
 </script>
 
@@ -246,12 +306,22 @@
       <div class="timer-box">
         <h1>{formattedTime}</h1>
         {#if !timerRunning}
-        <button class="start-button" on:click={startTimer}>Start</button>
+        <button class="start-button" on:click={() => {
+          startTimer();
+          unrestrictVideo();
+        }}>Start</button>
         {:else}
-        <button class="start-button" on:click={pauseTimer}>Pause</button>
+        <button class="start-button" on:click={() => {
+          pauseTimer();
+          pauseVideo();
+          restrictVideo();
+        }}>Pause</button>
         {/if}
 
-        <button class="reset-button" on:click={resetTimer}>Reset</button>
+        <button class="reset-button" on:click={() => {
+          resetTimer();
+          closeModal();
+        }}>Reset</button>
 
         {#if claimReward}
         <button class="reward-button" on:click={() => {
@@ -270,9 +340,15 @@
         <h2>REWARD</h2>
         <p>Congratulations! you get 5 minutes of REELS</p>
         <button on:click={() => {
-          hidePlayer();
           closeModal();}}>Close</button>
-          <div id="player" >words</div>
+          <div id="player-container">
+          <div id="player" >error loading video<button on:click={reloadPlayer}>Reload</button> </div>
+          {#if restrict}
+          <div class="blocker">
+            Blocked
+          </div>
+          {/if}
+          </div>  
       </div>
     </div>
   {/if}
@@ -458,6 +534,31 @@ main{
   transition: 0.5s !important;
 }
 
+
+#player-container {
+    background-color: #000000;
+    position: relative; /* Needed to position the blocker over the player */
+    width: 360px;
+    height: 640px;
+  }
+
+
+
+   .blocker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 360px;
+    height: 640px;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    z-index: 10; /* Higher than player */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+  }
 
 </style>
 
