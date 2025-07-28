@@ -19,8 +19,11 @@
   
   let interval;
 
-  let modes = ["Normal Mode", "Chill Mode", "Puzzle Mode", "Brainrot Mode"];
-  let mode = "Normal Mode"
+  let modes = ["Normal", "Chill", "Puzzle", "Brainrot"];
+  let mode = modes[0];
+  let modeText = "Normal Mode✅";
+  let modeIndex;
+  let rewardText;
 
   let t_hero_color = '#4E4E64'; 
 
@@ -91,15 +94,21 @@
   // PAGE CHANGE FUNCTIONS
   function normalMode(){
      //change page colors
-    t_hero_color = '#4E4E64'
+    t_hero_color = '#4E4E64';
     //change text
-    mode = "Normal Mode ✅"
+    mode = modes[0];
+    modeText =  "Normal Mode ✅";
+    modeIndex = modes.indexOf(mode);
+    rewardText = "";
   }
   function brainrotMode(){
     //change page colors
-    t_hero_color = '#FF2300'
+    t_hero_color = '#FF2300';
     //change text
-    mode = "BRAINROT Mode 💀"
+    mode = modes[3];
+    modeText = "BRAINROT Mode 💀";
+    modeIndex = modes.indexOf(mode);
+    rewardText = "Congratulations! you get 5 minutes of REELS!";
   }
 
   function handleClick(item){
@@ -302,7 +311,7 @@
   </div> -->
 
    <div class="timer-hero" style="background-color: {t_hero_color}">
-      <h2>{mode}</h2>
+      <h2>{modeText}</h2>
       <div class="timer-box">
         <h1>{formattedTime}</h1>
         {#if !timerRunning}
@@ -323,32 +332,38 @@
           closeModal();
         }}>Reset</button>
 
-        {#if claimReward}
+        <!-- {#if claimReward} -->
         <button class="reward-button" on:click={() => {
           openModal();
           hideRewardButton();
           startTimer();
           displayPlayer();
         }}>Claim Reward!</button>
-        {/if}
+        <!-- {/if} -->
       </div>
   </div>
 
   {#if showModal}
-    <div class="modal-backdrop" on:click={closeModal}>
+    <div class="modal-backdrop" >
       <div class="modal-content" on:click|stopPropagation>
         <h2>REWARD</h2>
-        <p>Congratulations! you get 5 minutes of REELS</p>
+        <p>{rewardText}</p>
         <button on:click={() => {
           closeModal();}}>Close</button>
+          {#if modeIndex === 3}
           <div id="player-container">
           <div id="player" >error loading video<button on:click={reloadPlayer}>Reload</button> </div>
-          {#if restrict}
-          <div class="blocker">
-            Blocked
-          </div>
-          {/if}
+            {#if restrict}
+            <div class="blocker">
+              Blocked
+            </div>
+            {/if}
           </div>  
+
+          {:else}
+          <p>error loading reward</p>
+          {/if}
+          
       </div>
     </div>
   {/if}
@@ -418,6 +433,8 @@ main{
     min-height: 25rem;
     max-height: 50rem;
     width: 100%;
+    border-radius: 1rem;
+    margin: 1rem;
   }
 
   .timer-hero h2{
@@ -535,11 +552,31 @@ main{
 }
 
 
+
+.modal-backdrop{
+  margin: 1rem;
+  background-color: #FFFFFF;
+  min-width: 27rem;
+  border-radius: 1rem;
+  display: flex;
+  justify-content: center;
+
+}
+
+.modal-content{
+  color:#000000;
+  padding-bottom: 1rem;
+}
 #player-container {
     background-color: #000000;
     position: relative; /* Needed to position the blocker over the player */
     width: 360px;
     height: 640px;
+    border-radius: 1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
 
