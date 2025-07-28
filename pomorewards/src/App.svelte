@@ -86,6 +86,7 @@
     minutes = 25;
     seconds = 0;
     timerRunning = false;
+    breakTime = false;
   }
 
    // Format with leading zero
@@ -108,17 +109,41 @@
     mode = modes[3];
     modeText = "BRAINROT Mode 💀";
     modeIndex = modes.indexOf(mode);
-    rewardText = "Congratulations! you get 5 minutes of REELS!";
+    rewardText = "Congratulations! you get 5 minutes of SHORTS!";
+  }
+  function chillMode(){
+    //change page colors
+    t_hero_color = '#63B9EB';
+    //change text
+    mode = modes[1];
+    modeText = "Chill Mode 😌";
+    modeIndex = modes.indexOf(mode);
+    rewardText = "Congratulations! you get a calming video for 5 minutes!";
+  }
+  function puzzleMode(){
+    //change page colors
+    t_hero_color = '#A2C700';
+    //change text
+    mode = modes[2];
+    modeText = "Puzzle Mode 🧠";
+    modeIndex = modes.indexOf(mode);
+    rewardText = "Try to solve this puzzle in 5 minutes!";
   }
 
   function handleClick(item){
+    if(breakTime){
+      alert("Please wait for break to finish or click reset to change mode.");
+      return;
+    }
     switch(item){
       case "Normal":
         normalMode();
         break;
       case "Chill":
+        chillMode();
         break;
       case "Puzzle":
+        puzzleMode();
         break;
       case "BRAINROT":
         brainrotMode();
@@ -332,14 +357,14 @@
           closeModal();
         }}>Reset</button>
 
-        <!-- {#if claimReward} -->
+        {#if claimReward}
         <button class="reward-button" on:click={() => {
           openModal();
           hideRewardButton();
           startTimer();
           displayPlayer();
         }}>Claim Reward!</button>
-        <!-- {/if} -->
+        {/if}
       </div>
   </div>
 
