@@ -31,12 +31,15 @@
   let claimReward = false;
 
   let player;
-  let player_v = 'hidden';
+  let longPlayer;
 
   let ytReady = false;
 
   let playlistLength;
   let index;
+
+  let longLength;
+  let longIndex;
 
   let restrict = false;
   //TIMER FUNCTIONS
@@ -57,7 +60,6 @@
         }else{
           resetTimer();
           closeModal();
-          hidePlayer();
         }
         return;
       }
@@ -173,6 +175,11 @@
       player.destroy();
       player = null;
     }
+
+    if (longPlayer){
+      longPlayer.destroy()
+      longPlayer = null;
+    }
   });
 
   function reloadPlayer(){
@@ -203,43 +210,113 @@
       });
     
   }
+  
+  function reloadLongPlayer(){
+    if (longPlayer){
+      longPlayer.destroy()
+      longPlayer = null;
+    }
+
+     longPlayer = new YT.Player('long-player', {
+          height: '360',
+          width: '640',
+          playerVars: {
+            listType: 'playlist',
+            list: 'PLXYsPmU7pEccto5sP51U66Ggk4kqDxuVY', 
+            index: longIndex,
+            autoplay: 1,
+            mute: 0,
+            controls: 1,
+            loop: 1,
+            playlist: 'PLXYsPmU7pEccto5sP51U66Ggk4kqDxuVY'
+          },
+          events: {
+            onReady: () => {
+              longPlayer.setShuffle(true);
+              longPlayer.shufflePlaylist();
+            },
+            onError: (event) => {
+              console.warn('Player error, reloading...');
+              reloadPlayer();
+            }
+          }
+        });
+  }
 
   async function openModal(){
     playlistLength = 202;
+    longLength = 10;
     index = Math.floor(Math.random() * playlistLength);
+    longIndex = Math.floor(Math.random() * longLength);
     showModal = true;
     await tick();
-    if (ytReady && !player) {
-      player = new YT.Player('player', {
-        height: '640',
-        width: '360',
-        playerVars: {
-          listType: 'playlist',
-          list: 'PL3RN74kSDDcibI-VWFrYvjI_F4asqPjYV', 
-          index: index,
-          autoplay: 1,
-          mute: 1,
-          controls: 1,
-          loop: 1,
-          playlist: 'PL3RN74kSDDcibI-VWFrYvjI_F4asqPjYV'
-        },
-         events: {
-          onReady: () => {
-            player.setShuffle(true);
-            player.shufflePlaylist();
-          },
-          onError: (event) => {
-            console.warn('Player error, reloading...');
-            reloadPlayer();
-          }
-        }
-      });
 
-      
-    } else if(player){
-      player.playVideo();
-    } else {
-      if (player) player.pauseVideo();
+    if(modeIndex === 3){
+      if (ytReady && !player) {
+        player = new YT.Player('player', {
+          height: '640',
+          width: '360',
+          playerVars: {
+            listType: 'playlist',
+            list: 'PL3RN74kSDDcibI-VWFrYvjI_F4asqPjYV', 
+            index: index,
+            autoplay: 1,
+            mute: 1,
+            controls: 1,
+            loop: 1,
+            playlist: 'PL3RN74kSDDcibI-VWFrYvjI_F4asqPjYV'
+          },
+          events: {
+            onReady: () => {
+              player.setShuffle(true);
+              player.shufflePlaylist();
+            },
+            onError: (event) => {
+              console.warn('Player error, reloading...');
+              reloadPlayer();
+            }
+          }
+        });
+
+        
+      } else if(player){
+        player.playVideo();
+      } else {
+        if (player) player.pauseVideo();
+      }
+    }else if(modeIndex === 1){
+        if (ytReady && !longPlayer) {
+        longPlayer = new YT.Player('long-player', {
+          height: '360',
+          width: '640',
+          playerVars: {
+            listType: 'playlist',
+            list: 'PLXYsPmU7pEccto5sP51U66Ggk4kqDxuVY', 
+            index: longIndex,
+            autoplay: 1,
+            mute: 0,
+            controls: 1,
+            loop: 1,
+            playlist: 'PLXYsPmU7pEccto5sP51U66Ggk4kqDxuVY'
+          },
+          events: {
+            onReady: () => {
+              longPlayer.setShuffle(true);
+              longPlayer.shufflePlaylist();
+            },
+            onError: (event) => {
+              console.warn('Player error, reloading...');
+              reloadPlayer();
+            }
+          }
+        });
+
+        
+      } else if(longPlayer){
+        longPlayer.playVideo();
+      } else {
+        if (longPlayer) longPlayer.pauseVideo();
+      }
     }
 
   }
@@ -250,7 +327,12 @@
     if (player) {
     player.destroy();
     player = null;
-  }
+    }
+
+    if (longPlayer){
+      longPlayer.destroy()
+      longPlayer = null;
+    }
   }
 
   function showRewardButton(){
@@ -261,22 +343,21 @@
     claimReward = false;
   }
 
-  function displayPlayer(){
-    player_v = 'visible';
-  }
-
-  function hidePlayer(){
-    player_v = 'hidden';
-  }
   function pauseVideo(){
     if (player){
       player.pauseVideo();
+    }
+    if (longPlayer){
+      longPlayer.pauseVideo();
     }
   }
 
   function playVideo(){
     if (player){
       player.playVideo();
+    }
+    if (longPlayer){
+      longPlayer.playVideo();
     }
   }
 
@@ -362,7 +443,6 @@
           openModal();
           hideRewardButton();
           startTimer();
-          displayPlayer();
         }}>Claim Reward!</button>
         {/if}
       </div>
@@ -384,7 +464,15 @@
             </div>
             {/if}
           </div>  
-
+          {:else if modeIndex === 1}
+          <div id="long-container">
+          <div id="long-player">error loading video <button on:click={reloadLongPlayer}>Reload</button></div>
+            {#if restrict}
+            <div class="long-blocker">
+              Blocked
+            </div>
+            {/if}
+        </div>
           {:else}
           <p>error loading reward</p>
           {/if}
@@ -581,11 +669,12 @@ main{
 .modal-backdrop{
   margin: 1rem;
   background-color: #FFFFFF;
-  min-width: 27rem;
+  min-width: 20rem;
   border-radius: 1rem;
   display: flex;
   justify-content: center;
-
+  padding-right: 2rem;
+  padding-left: 2rem;
 }
 
 .modal-content{
@@ -604,7 +693,33 @@ main{
     justify-content: center;
   }
 
+#long-container {
+    background-color: #000000;
+    position: relative; /* Needed to position the blocker over the player */
+    width: 640px;
+    height: 360px;
+    border-radius: 1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
 
+.long-blocker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 640px;
+    height: 360px;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    z-index: 10; /* Higher than player */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
 
    .blocker {
     position: absolute;
