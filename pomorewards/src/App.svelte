@@ -4,6 +4,7 @@
   import Counter from './lib/Counter.svelte'
 
   import { onMount, tick, onDestroy } from 'svelte';
+  import { audioData } from './audioData.js';
 
   let navItems = ["Chill", "Puzzle", "BRAINROT", "Normal"];
 
@@ -42,6 +43,11 @@
   let longIndex;
 
   let restrict = false;
+
+  let audioIndex = 0;
+  let audioFile = new Audio(audioData[audioIndex].url);
+
+
   //TIMER FUNCTIONS
   function startTimer() {
     if (timerRunning) return;
@@ -57,9 +63,11 @@
           minutes = breakMin;
           seconds = 0;
           showRewardButton();
+          playSound(0);
         }else{
           resetTimer();
           closeModal();
+          playSound(1);
         }
         return;
       }
@@ -368,6 +376,14 @@
   function unrestrictVideo(){
     restrict = false;
   }
+
+  function playSound(audioIndex){
+    audioFile.src = audioData[audioIndex].url;
+    audioFile.load();
+    audioFile.play();
+  }
+
+
 </script>
 
 <main>
@@ -424,6 +440,7 @@
         <button class="start-button" on:click={() => {
           startTimer();
           unrestrictVideo();
+          
         }}>Start</button>
         {:else}
         <button class="start-button" on:click={() => {
@@ -446,9 +463,9 @@
         }}>Claim Reward!</button>
         {/if}
       </div>
-  </div>
 
-  {#if showModal}
+
+        {#if showModal}
     <div class="modal-backdrop" >
       <div class="modal-content" on:click|stopPropagation>
         <h2>REWARD</h2>
@@ -480,6 +497,9 @@
       </div>
     </div>
   {/if}
+  </div>
+
+
 
 
   
@@ -544,7 +564,7 @@ main{
     justify-content: center;  
     align-items: center;  
     min-height: 25rem;
-    max-height: 50rem;
+    /* max-height: 50rem; */
     width: 100%;
     border-radius: 1rem;
     margin: 1rem;
