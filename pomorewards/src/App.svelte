@@ -6,35 +6,37 @@
   import { onMount, tick, onDestroy } from 'svelte';
   import { audioData } from './audioData.js';
 
+
   let navItems = ["Chill", "Puzzle", "BRAINROT", "Normal"];
 
   //timer 
 
-  let workMin = 1;
-  let breakMin = 5; 
-  let minutes = workMin;
-  let seconds = 0;
+  let workMin = $state(1);
+  let breakMin = $state(5); 
+  let minutes = $derived(workMin);
+  let seconds = $state(0);
 
-  let timerRunning = false;
-  let breakTime = false;
+
+  let timerRunning = $state(false);
+  let breakTime = $state(false);
   
   let interval;
 
   let modes = ["Normal", "Chill", "Puzzle", "Brainrot"];
-  let mode = modes[0];
-  let modeText = "Normal Mode✅";
-  let modeIndex;
-  let rewardText;
+  let mode = $state(modes[0]);
+  let modeText = $state("Normal Mode✅");
+  let modeIndex = $state(0);
+  let rewardText = $state("");
 
-  let t_hero_color = '#4E4E64'; 
+  let t_hero_color = $state('#4E4E64'); 
 
-  let showModal = false;
-  let claimReward = false;
+  let showModal = $state(false);
+  let claimReward = $state(false);
 
   let player;
   let longPlayer;
 
-  let ytReady = false;
+  let ytReady = $state(false);
 
   let playlistLength;
   let index;
@@ -42,11 +44,10 @@
   let longLength;
   let longIndex;
 
-  let restrict = false;
+  let restrict = $state(false);
 
   let audioIndex = 0;
   let audioFile = new Audio(audioData[audioIndex].url);
-
 
   //TIMER FUNCTIONS
   function startTimer() {
@@ -99,8 +100,8 @@
     breakTime = false;
   }
 
-   // Format with leading zero
-  $: formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+  let formattedTime = $derived(String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0'));
 
   // PAGE CHANGE FUNCTIONS
   function normalMode(){
@@ -389,17 +390,17 @@
 <main>
 
   <!-- From Uiverse.io by SelfMadeSystem --> 
-<div class="nav">
-  <div class="container">
-     {#each navItems as item}
+<!-- <div class="nav">
+  <div class="container"> -->
+     <!-- {#each navItems as item} -->
           <!-- <li><a href="#">{item}</a></li> -->
-           <div class="btn" on:click={() => handleClick(item)}>{item}</div>
-        {/each}
+           <!-- <div class="btn" on:click={() => handleClick(item)}>{item}</div> -->
+        <!-- {/each} -->
     <!-- <div class="btn">Home</div>
     <div class="btn">Contact</div>
     <div class="btn">About</div>
     <div class="btn">FAQ</div> -->
-    <svg
+    <!-- <svg
       class="outline"
       overflow="visible"
       width="400"
@@ -419,18 +420,16 @@
       ></rect>
     </svg>
   </div>
-</div>
+</div> -->
 
 
-  <!-- <div class="nav-class">
+  <div class="nav-class">
     <nav>
-      <ul>
-        {#each navItems as item}
-          <li><a href="#">{item}</a></li>
-        {/each}
-      </ul>
+      {#each navItems as item}
+      <div class="btn" on:click={() => handleClick(item)}>{item}</div>
+      {/each}
     </nav>
-  </div> -->
+  </div>
 
    <div class="timer-hero" style="background-color: {t_hero_color}">
       <h2>{modeText}</h2>
@@ -530,32 +529,31 @@ main{
   .nav-class{
     background-color: rgb(255, 255, 255);
     min-width: 50rem;
+    align-items: center;
     
   } 
 
   nav{ 
     padding: 1rem 2rem;
-  }
-
-  .nav-class li a {
-    color: black; /* 🔹 Change this to any color you want */
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: color 0.2s ease;
-  }
-
-
-  ul{
     display: flex;
-    gap: 1.5rem;               /* Space between nav items */
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    align-items: center;
     justify-content: center;
-    color: black;
+    gap: 0.5rem;
   }
 
+  .btn {
+  padding: 0.5em 1.5em;
+  color: #000000;
+  background-color: rgb(255, 255, 255);
+  cursor: pointer;
+  border-radius: 100px;
+  
+}
+
+.btn:hover {
+  background: rgb(0, 0, 0);
+  color: #FFFFFF;
+}
  
   .timer-hero{
     display: flex;
@@ -609,80 +607,10 @@ main{
 
 
 
-  /* From Uiverse.io by SelfMadeSystem */ 
-.outline {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
 
-.rect {
-  stroke-dashoffset: 5;
-  stroke-dasharray: 0 0 10 40 10 40;
-  transition: 0.5s;
-  stroke: #000000;
-}
 
-.nav {
-  position: relative;
-  width: 400px;
-  height: 60px;
-}
 
-.container:hover .outline .rect {
-  transition: 999999s;
-  /* Must specify these values here as something *different* just so that the transition works properly */
-  stroke-dashoffset: 1;
-  stroke-dasharray: 0;
-}
 
-.container {
-  position: absolute;
-  inset: 0;
-  background: rgb(255, 255, 255);    
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  padding: 0.5em;
-}
-
-.btn {
-  padding: 0.5em 1.5em;
-  color: #000000;
-  cursor: pointer;
-  transition: 0.1s;
-}
-
-.btn:hover {
-  background: #fff3;
-}
-
-.btn:nth-child(1):hover ~ svg .rect {
-  stroke-dashoffset: 0;
-  stroke-dasharray: 0 2 8 73.3 8 10.7;
-}
-
-.btn:nth-child(2):hover ~ svg .rect {
-  stroke-dashoffset: 0;
-  stroke-dasharray: 0 12.6 9.5 49.3 9.5 31.6;
-}
-
-.btn:nth-child(3):hover ~ svg .rect {
-  stroke-dashoffset: 0;
-  stroke-dasharray: 0 24.5 8.5 27.5 8.5 55.5;
-}
-
-.btn:nth-child(4):hover ~ svg .rect {
-  stroke-dashoffset: 0;
-  stroke-dasharray: 0 34.7 6.9 10.2 6.9 76;
-}
-
-.btn:hover ~ .outline .rect {
-  stroke-dashoffset: 0;
-  stroke-dasharray: 0 0 10 40 10 40;
-  transition: 0.5s !important;
-}
 
 
 
