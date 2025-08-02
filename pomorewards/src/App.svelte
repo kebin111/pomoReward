@@ -5,6 +5,7 @@
 
   import { onMount, tick, onDestroy } from 'svelte';
   import { audioData } from './audioData.js';
+  import { anagramMap, countMap } from './anagrams.js';
 
 
   let navItems = ["Chill", "Puzzle", "BRAINROT", "Normal"];
@@ -48,6 +49,11 @@
 
   let audioIndex = 0;
   let audioFile = new Audio(audioData[audioIndex].url);
+
+  let anagram = $state("scalp");
+  let wordList = [
+  "listen", "silent", "enlist", "inlets", "google", "gogole", "cat", "act", "tac", "dog", "god", "odg"
+];
 
   //TIMER FUNCTIONS
   function startTimer() {
@@ -139,6 +145,7 @@
     modeText = "Puzzle Mode 🧠";
     modeIndex = modes.indexOf(mode);
     rewardText = "Try to solve this puzzle in 5 minutes!";
+    jumbleWord(anagram);
   }
 
   function handleClick(item){
@@ -384,45 +391,30 @@
     audioFile.play();
   }
 
+  function jumbleWord(word){
+    const chars = word.split('');
+
+    for  (let i = chars.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [chars[i], chars[j]] = [chars[j], chars[i]];
+    }
+
+    anagram = chars.join('');
+  }
+
+  //create anagram hashmap
+  function createAnagramMap(wordList){
+    const anagramMap = {};
+
+    for(const word of wordList){
+
+    }
+  }
 
 </script>
 
 <main>
-
-  <!-- From Uiverse.io by SelfMadeSystem --> 
-<!-- <div class="nav">
-  <div class="container"> -->
-     <!-- {#each navItems as item} -->
-          <!-- <li><a href="#">{item}</a></li> -->
-           <!-- <div class="btn" on:click={() => handleClick(item)}>{item}</div> -->
-        <!-- {/each} -->
-    <!-- <div class="btn">Home</div>
-    <div class="btn">Contact</div>
-    <div class="btn">About</div>
-    <div class="btn">FAQ</div> -->
-    <!-- <svg
-      class="outline"
-      overflow="visible"
-      width="400"
-      height="60"
-      viewBox="0 0 400 60"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect
-        class="rect"
-        pathLength="100"
-        x="0"
-        y="0"
-        width="400"
-        height="60"
-        fill="transparent"
-        stroke-width="5"
-      ></rect>
-    </svg>
-  </div>
-</div> -->
-
-
+  
   <div class="nav-class">
     <nav>
       {#each navItems as item}
@@ -454,19 +446,19 @@
           closeModal();
         }}>Reset</button>
 
-        {#if claimReward}
+        <!-- {#if claimReward} -->
         <button class="reward-button" on:click={() => {
           openModal();
           hideRewardButton();
           startTimer();
         }}>Claim Reward!</button>
-        {/if}
+        <!-- {/if} -->
       </div>
 
 
         {#if showModal}
     <div class="modal-backdrop" >
-      <div class="modal-content" on:click|stopPropagation>
+      <div class="modal-content" > <!--on:click|stopPropagation-->
         <h2>REWARD</h2>
         <p>{rewardText}</p>
         <button on:click={() => {
@@ -489,6 +481,18 @@
             </div>
             {/if}
         </div>
+          {:else if modeIndex === 2}
+          <div id="puzzle-container">
+            <div id="text-container">
+              <p>Your anagram is...</p>
+              <h3>{anagram}</h3>
+              <p>x possible words</p>
+              <input>
+
+              <!-- reward when they get all words -->
+            </div>
+            
+          </div>
           {:else}
           <p>error loading reward</p>
           {/if}
@@ -528,9 +532,10 @@ main{
 }
   .nav-class{
     background-color: rgb(255, 255, 255);
-    min-width: 50rem;
-    align-items: center;
     
+    align-items: center;
+    border-radius: 100px;
+    overflow: hidden;
   } 
 
   nav{ 
@@ -539,6 +544,7 @@ main{
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    
   }
 
   .btn {
@@ -547,7 +553,7 @@ main{
   background-color: rgb(255, 255, 255);
   cursor: pointer;
   border-radius: 100px;
-  
+  font-weight: bold;
 }
 
 .btn:hover {
@@ -683,6 +689,13 @@ main{
     color: white;
     font-size: 18px;
     cursor: pointer;
+  }
+
+  #text-container{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
   }
 
 </style>
