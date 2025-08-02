@@ -55,6 +55,12 @@
   "listen", "silent", "enlist", "inlets", "google", "gogole", "cat", "act", "tac", "dog", "god", "odg"
 ];
 
+  let pWords = $state(0);
+  let anaKey = $state([""]);
+  let anaTemp = $derived([...anagram]);
+  // let anaLength = $derived(anaTemp.length);
+
+
   //TIMER FUNCTIONS
   function startTimer() {
     if (timerRunning) return;
@@ -333,6 +339,8 @@
       } else {
         if (longPlayer) longPlayer.pauseVideo();
       }
+    } else if(modeIndex === 2){
+      initializePuzzle();
     }
 
   }
@@ -402,14 +410,38 @@
     anagram = chars.join('');
   }
 
-  //create anagram hashmap
-  function createAnagramMap(wordList){
-    const anagramMap = {};
+function initializePuzzle(){
+  //get random word from hashmap
+  let keys = Object.keys(anagramMap);
+  anaKey = keys[Math.floor(Math.random() * keys.length)];
+  anagram = anagramMap[anaKey];
+  // console.log("this is supposed to be anagram key: ");
+  // console.log(anaKey);
+  // console.log(anagram);
+  
+}
 
-    for(const word of wordList){
-
+function loadTextInput(){
+  let inputBox = document.getElementById("puzzle-input");
+  let text = inputBox.value;
+  let tIndex;
+  
+  if(anaTemp.includes(text)){
+    console.log("CORRECT MINUS ONE WORD");
+    tIndex = anaTemp.indexOf(text);
+    if(tIndex !== -1){
+      anaTemp.splice(tIndex, 1);
+      anaTemp = [...anaTemp];
     }
+    console.log(anaTemp);
+    console.log(anaTemp.length);
+  }else{
+    console.log("EEEENKK WRONG");
   }
+
+} 
+
+
 
 </script>
 
@@ -485,10 +517,10 @@
           <div id="puzzle-container">
             <div id="text-container">
               <p>Your anagram is...</p>
-              <h3>{anagram}</h3>
-              <p>x possible words</p>
-              <input>
-
+              <h3>{anaKey}</h3>
+              <p>{anaTemp.length} possible words</p>
+              <input id="puzzle-input" placeholder="input your answer here">
+              <button class="submit" on:click={loadTextInput}>submit</button>
               <!-- reward when they get all words -->
             </div>
             
@@ -698,6 +730,12 @@ main{
     align-items: center;
   }
 
+  .submit{
+    margin: 15px;
+    background-color: black;
+    color: white;
+    border-radius: 1rem;
+  }
 </style>
 
 
