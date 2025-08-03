@@ -48,7 +48,8 @@
   let restrict = $state(false);
 
   let audioIndex = 0;
-  let audioFile = new Audio(audioData[audioIndex].url);
+  let audioFile = $state(new Audio(audioData[audioIndex].url));
+
 
   let anagram = $state("scalp");
   let wordList = [
@@ -56,9 +57,11 @@
 ];
 
   let pWords = $state(0);
-  let anaKey = $state([""]);
+  let anaKey = $state("");
   let anaTemp = $derived([...anagram]);
   // let anaLength = $derived(anaTemp.length);
+
+  let solve = $state(false);
 
 
   //TIMER FUNCTIONS
@@ -81,6 +84,7 @@
           resetTimer();
           closeModal();
           playSound(1);
+          resetPuzzle();
         }
         return;
       }
@@ -110,6 +114,8 @@
     seconds = 0;
     timerRunning = false;
     breakTime = false;
+    
+    resetPuzzle();
   }
 
 
@@ -425,6 +431,8 @@ function loadTextInput(){
   let inputBox = document.getElementById("puzzle-input");
   let text = inputBox.value;
   let tIndex;
+
+ 
   
   if(anaTemp.includes(text)){
     console.log("CORRECT MINUS ONE WORD");
@@ -435,13 +443,25 @@ function loadTextInput(){
     }
     console.log(anaTemp);
     console.log(anaTemp.length);
+    playSound(3);
+    if(anaTemp.length === 0){
+    console.log("CONGRATULATIONS!");
+    solve = true;
+    playSound(2);
+  }
   }else{
     console.log("EEEENKK WRONG");
+    playSound(4);
   }
+
+inputBox.value = "";
 
 } 
 
 
+function resetPuzzle(){
+   solve = false;
+}
 
 </script>
 
@@ -516,9 +536,13 @@ function loadTextInput(){
           {:else if modeIndex === 2}
           <div id="puzzle-container">
             <div id="text-container">
+              {#if !solve}
               <p>Your anagram is...</p>
               <h3>{anaKey}</h3>
               <p>{anaTemp.length} possible words</p>
+              {:else}
+              <h3 style="padding: 1rem;">Congratulations!</h3>
+              {/if}
               <input id="puzzle-input" placeholder="input your answer here">
               <button class="submit" on:click={loadTextInput}>submit</button>
               <!-- reward when they get all words -->
