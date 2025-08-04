@@ -8,7 +8,7 @@
   import { anagramMap, countMap } from './anagrams.js';
 
 
-  let navItems = ["Chill", "Puzzle", "BRAINROT", "Normal"];
+  let navItems = ["Chill", "Puzzle", "Brainrot", "Normal"];
 
   //timer 
 
@@ -165,6 +165,7 @@
       alert("Please wait for break to finish or click reset to change mode.");
       return;
     }
+
     switch(item){
       case "Normal":
         normalMode();
@@ -175,7 +176,7 @@
       case "Puzzle":
         puzzleMode();
         break;
-      case "BRAINROT":
+      case "Brainrot":
         brainrotMode();
         break;
     }
@@ -470,7 +471,8 @@ function resetPuzzle(){
   <div class="nav-class">
     <nav>
       {#each navItems as item}
-      <div class="btn" on:click={() => handleClick(item)}>{item}</div>
+      <div class="btn {item === mode ? 'active' : '' }" 
+      on:click={() => handleClick(item)}>{item}</div>
       {/each}
     </nav>
   </div>
@@ -612,7 +614,11 @@ main{
   font-weight: bold;
 }
 
-.btn:hover {
+.btn:hover{
+  background: rgb(112, 112, 112);
+  color: #FFFFFF;
+}
+.btn.active {
   background: rgb(0, 0, 0);
   color: #FFFFFF;
 }
@@ -645,29 +651,63 @@ main{
     padding: 2rem;
     border-radius: 1rem;
     font-size: 2rem;  
-    padding: 1rem;
+    padding: 1.5rem;
   } 
 
  
   .start-button{  
+    font-family: 'Chillax', sans-serif;
     background-color: black;
     color: white;
-    border-radius: 1rem;
+    border-radius: 100px;
+    padding: 10px;
+    border-color: #000000;
+    border-width: 2px;
+    border-style: solid;
+    font-weight: bold;
   }
 
-  .reset-button{  
-    background-color: black;
+  .start-button:hover{
+    background-color: rgb(94, 94, 94);
     color: white;
-    border-radius: 1rem;
   }
+
+  .reset-button{ 
+    font-family: 'Chillax', sans-serif; 
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    border-radius: 100px;
+    padding: 10px;
+    border-color: rgb(0, 0, 0);
+    border-width: 2px;
+    border-style: solid;
+    font-weight: bold;
+  }
+
+  .reset-button:hover{
+    background-color: rgb(179, 179, 179);
+    color: white;
+  }
+
 
   .reward-button{  
     background-color: rgb(25, 148, 0);
+ 
+
+    font-family: 'Chillax', sans-serif;
     color: white;
-    border-radius: 1rem;
+    border-radius: 100px;
+    padding: 10px;
+    border-color: rgb(25, 148, 0);
+    border-width: 2px;
+    border-style: solid;
+    font-weight: bold;
   }
 
-
+  .reward-button:hover{
+    background-color: rgba(25, 148, 0, 0.329);
+    color: white;
+  }
 
 
 
