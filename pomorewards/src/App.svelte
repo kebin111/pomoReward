@@ -29,7 +29,7 @@
   let modeIndex = $state(0);
   let rewardText = $state("");
 
-  let t_hero_color = $state('#4E4E64'); 
+  let t_hero_color = $state('linear-gradient(to top left, #4E4E64, #20203d );'); 
 
   let showModal = $state(false);
   let claimReward = $state(false);
@@ -124,7 +124,7 @@
   // PAGE CHANGE FUNCTIONS
   function normalMode(){
      //change page colors
-    t_hero_color = '#4E4E64';
+    t_hero_color = 'linear-gradient(to top left, #4E4E64, #20203d );';
     //change text
     mode = modes[0];
     modeText =  "Normal Mode ✅";
@@ -133,7 +133,7 @@
   }
   function brainrotMode(){
     //change page colors
-    t_hero_color = '#FF2300';
+    t_hero_color = 'linear-gradient(to top left, #520000, #ff1e00 );';
     //change text
     mode = modes[3];
     modeText = "BRAINROT Mode 💀";
@@ -142,7 +142,7 @@
   }
   function chillMode(){
     //change page colors
-    t_hero_color = '#63B9EB';
+    t_hero_color = 'linear-gradient(to top left, #63B9EB, #0062a3 );';
     //change text
     mode = modes[1];
     modeText = "Chill Mode 😌";
@@ -151,7 +151,7 @@
   }
   function puzzleMode(){
     //change page colors
-    t_hero_color = '#A2C700';
+    t_hero_color = 'linear-gradient(to top left, #A2C700, #648002 );';
     //change text
     mode = modes[2];
     modeText = "Puzzle Mode 🧠";
@@ -466,7 +466,7 @@ function resetPuzzle(){
 
 </script>
 
-<main>
+<main style= "background: {t_hero_color}">
   
   <div class="nav-class">
     <nav>
@@ -476,8 +476,11 @@ function resetPuzzle(){
       {/each}
     </nav>
   </div>
+    
 
    <div class="timer-hero" style="background-color: {t_hero_color}">
+    
+
       <h2>{modeText}</h2>
       <div class="timer-box">
         <h1>{formattedTime}</h1>
@@ -500,13 +503,13 @@ function resetPuzzle(){
           closeModal();
         }}>Reset</button>
 
-        <!-- {#if claimReward} -->
+        {#if claimReward}
         <button class="reward-button" on:click={() => {
           openModal();
           hideRewardButton();
           startTimer();
         }}>Claim Reward!</button>
-        <!-- {/if} -->
+        {/if}
       </div>
 
 
@@ -515,8 +518,10 @@ function resetPuzzle(){
       <div class="modal-content" > <!--on:click|stopPropagation-->
         <h2>REWARD</h2>
         <p>{rewardText}</p>
-        <button on:click={() => {
-          closeModal();}}>Close</button>
+        <button class="exit" on:click={() => {
+          closeModal();}}>
+          <img src="icons8-close.svg" alt="Close" class="icon"/>
+          </button>
           {#if modeIndex === 3}
           <div id="player-container">
           <div id="player" >error loading video<button on:click={reloadPlayer}>Reload</button> </div>
@@ -540,7 +545,7 @@ function resetPuzzle(){
             <div id="text-container">
               {#if !solve}
               <p>Your anagram is...</p>
-              <h3>{anaKey}</h3>
+              <h2>{anaKey}</h2>
               <p>{anaTemp.length} possible words</p>
               {:else}
               <h3 style="padding: 1rem;">Congratulations!</h3>
@@ -561,9 +566,9 @@ function resetPuzzle(){
   </div>
 
 
+  <footer>@pomorewards 2025 all rights reserved.</footer>
 
-
-  
+   
 </main>
 
 <style>
@@ -575,25 +580,38 @@ function resetPuzzle(){
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #24242400;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+   background: #000000;
+ 
 }
 main{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 100%;
+
+    border-radius: 2rem;
+
+    padding: 1rem;
 }
+
+
   .nav-class{
     background-color: rgb(255, 255, 255);
     
     align-items: center;
     border-radius: 100px;
     overflow: hidden;
+
+    border: 1px, solid, #000000;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   } 
 
   nav{ 
@@ -603,6 +621,7 @@ main{
     justify-content: center;
     gap: 0.5rem;
     
+   
   }
 
   .btn {
@@ -612,11 +631,18 @@ main{
   cursor: pointer;
   border-radius: 100px;
   font-weight: bold;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+ 
 }
 
 .btn:hover{
-  background: rgb(112, 112, 112);
-  color: #FFFFFF;
+  background: rgb(255, 255, 255);
+  color: #000000;
+
+  
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+
+  transform: translateY(-5px);
 }
 .btn.active {
   background: rgb(0, 0, 0);
@@ -634,10 +660,12 @@ main{
     width: 100%;
     border-radius: 1rem;
     margin: 1rem;
+    
   }
 
   .timer-hero h2{
-    font-weight: 500;
+    font-weight: 600;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
   }
 
   .timer-box{
@@ -652,6 +680,12 @@ main{
     border-radius: 1rem;
     font-size: 2rem;  
     padding: 1.5rem;
+
+    border: 1px, solid, #000000;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+
+    margin: 1rem;
+    
   } 
 
  
@@ -665,11 +699,12 @@ main{
     border-width: 2px;
     border-style: solid;
     font-weight: bold;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .start-button:hover{
-    background-color: rgb(94, 94, 94);
-    color: white;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    transform: translateY(-5px);
   }
 
   .reset-button{ 
@@ -682,11 +717,12 @@ main{
     border-width: 2px;
     border-style: solid;
     font-weight: bold;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .reset-button:hover{
-    background-color: rgb(179, 179, 179);
-    color: white;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    transform: translateY(-5px);
   }
 
 
@@ -702,11 +738,12 @@ main{
     border-width: 2px;
     border-style: solid;
     font-weight: bold;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .reward-button:hover{
-    background-color: rgba(25, 148, 0, 0.329);
-    color: white;
+   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    transform: translateY(-5px);
   }
 
 
@@ -725,6 +762,9 @@ main{
   justify-content: center;
   padding-right: 2rem;
   padding-left: 2rem;
+
+  border: 1px, solid, #000000;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .modal-content{
@@ -732,6 +772,7 @@ main{
   padding-bottom: 1rem;
 }
 #player-container {
+    margin-top: 1rem;
     background-color: #000000;
     position: relative; /* Needed to position the blocker over the player */
     width: 360px;
@@ -741,6 +782,8 @@ main{
     display: flex;
     flex-direction: column;
     justify-content: center;
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   }
 
 #long-container {
@@ -753,6 +796,7 @@ main{
     display: flex;
     flex-direction: column;
     justify-content: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .long-blocker {
@@ -795,11 +839,61 @@ main{
   }
 
   .submit{
-    margin: 15px;
+    margin-top: 1rem;
+    font-family: 'Chillax', sans-serif;
     background-color: black;
     color: white;
-    border-radius: 1rem;
+    border-radius: 100px;
+    padding: 10px;
+    border-color: #000000;
+    border-width: 2px;
+    border-style: solid;
+    font-weight: bold;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
+  .submit:hover{
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    transform: translateY(-5px);
+  }
+
+  .exit {
+    background-color: #FFFFFF;
+    border-style: solid;
+    border-color: #000000;
+    border-width: 1px;
+    border-radius: 100px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin: 1rem;
+  }
+
+  .exit:hover{ 
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    transform: translateY(-5px);
+  }
+  .icon {
+  background-color: #FFFFFF;
+  width: 1rem;
+  height: 1rem;
+  vertical-align: middle;
+}
+
+#puzzle-input{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  background-color: #f3f4f6;
+  color: #333;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+
 </style>
 
 
