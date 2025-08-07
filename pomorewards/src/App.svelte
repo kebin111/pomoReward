@@ -247,8 +247,6 @@
     }
 
      longPlayer = new YT.Player('long-player', {
-          height: '360',
-          width: '640',
           playerVars: {
             listType: 'playlist',
             list: 'PLXYsPmU7pEccto5sP51U66Ggk4kqDxuVY', 
@@ -316,8 +314,6 @@
     }else if(modeIndex === 1){
         if (ytReady && !longPlayer) {
         longPlayer = new YT.Player('long-player', {
-          height: '360',
-          width: '640',
           playerVars: {
             listType: 'playlist',
             list: 'PLXYsPmU7pEccto5sP51U66Ggk4kqDxuVY', 
@@ -606,14 +602,21 @@ main{
 
 
   .nav-class{
+    display: flex;
     background-color: rgb(255, 255, 255);
     
     align-items: center;
     border-radius: 100px;
     overflow: hidden;
 
-    border: 1px, solid, #000000;
+    border: 1px solid #000000;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 25rem;
+
+    justify-content: center;
+
+   
   } 
 
   nav{ 
@@ -622,8 +625,9 @@ main{
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    width: 90%;
+    max-width: 25rem;
     
-   
   }
 
   .btn {
@@ -634,7 +638,8 @@ main{
   border-radius: 100px;
   font-weight: bold;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
- 
+  font-size: clamp(0.8rem, 1vw, 1rem);
+
 }
 
 .btn:hover{
@@ -674,7 +679,8 @@ main{
     position: relative;
     background-color:rgb(255, 255, 255); 
     color: black;
-    min-width: 25rem;
+    width: 90%;
+    /* min-width: 25rem; */
     max-width: 25rem;
     min-height: 10rem;
     max-height: 15rem;  
@@ -765,14 +771,15 @@ main{
 
 
 .modal-backdrop{
-  margin: 1rem;
+  margin: 1rem auto;
   background-color: #FFFFFF;
-  min-width: 20rem;
+  width: 35%;
+  max-width: 70rem;
   border-radius: 1rem;
   display: flex;
   justify-content: center;
-  padding-right: 2rem;
-  padding-left: 2rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
 
   border: 1px, solid, #000000;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
@@ -800,8 +807,9 @@ main{
 #long-container {
     background-color: #000000;
     position: relative; /* Needed to position the blocker over the player */
-    width: 640px;
-    height: 360px;
+    width: 100%;
+    max-width: 640px;
+    aspect-ratio: 16 / 9;
     border-radius: 1rem;
     overflow: hidden;
     display: flex;
@@ -810,12 +818,21 @@ main{
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
+#long-player{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .long-blocker {
     position: absolute;
     top: 0;
     left: 0;
-    width: 640px;
-    height: 360px;
+    width: 100%;
+    max-width: 640px;
+    aspect-ratio: 16 / 9;
     background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
     z-index: 10; /* Higher than player */
     display: flex;
