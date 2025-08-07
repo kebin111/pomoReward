@@ -482,6 +482,7 @@ function resetPuzzle(){
     
 
       <h2>{modeText}</h2>
+      
       <div class="timer-box">
         <h1>{formattedTime}</h1>
         {#if !timerRunning}
@@ -510,6 +511,7 @@ function resetPuzzle(){
           startTimer();
         }}>Claim Reward!</button>
         {/if}
+
       </div>
 
 
@@ -669,6 +671,7 @@ main{
   }
 
   .timer-box{
+    position: relative;
     background-color:rgb(255, 255, 255); 
     color: black;
     min-width: 25rem;
@@ -681,11 +684,10 @@ main{
     font-size: 2rem;  
     padding: 1.5rem;
 
-    border: 1px, solid, #000000;
+    border: 1px solid #000000;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-
-    margin: 1rem;
-    
+    margin-top: 3rem;
+    margin-bottom: 1rem;
   } 
 
  
@@ -727,18 +729,27 @@ main{
 
 
   .reward-button{  
-    background-color: rgb(25, 148, 0);
+    
+    position: absolute;
+    top: -1.5rem; /* moves button up to overlap */
+    right: -1.5rem;
+    
+    
+    background-color: #ff2a00;
  
 
     font-family: 'Chillax', sans-serif;
     color: white;
     border-radius: 100px;
     padding: 10px;
-    border-color: rgb(25, 148, 0);
+    border-color: #ff2a00;
     border-width: 2px;
     border-style: solid;
     font-weight: bold;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    z-index: 2;
+  
+    
   }
 
   .reward-button:hover{
@@ -893,6 +904,9 @@ main{
   outline: none;
 }
 
+footer{
+  padding-top: 20rem;
+}
 
 </style>
 
