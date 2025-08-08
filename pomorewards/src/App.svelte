@@ -161,8 +161,8 @@
   }
 
   function handleClick(item){
-    if(breakTime){
-      alert("Please wait for break to finish or click reset to change mode.");
+    if(timerRunning){
+      alert("Please wait for timer to finish or click reset to change mode.");
       return;
     }
 
@@ -498,6 +498,7 @@ function resetPuzzle(){
         <button class="reset-button" on:click={() => {
           resetTimer();
           closeModal();
+          hideRewardButton();
         }}>Reset</button>
 
         {#if claimReward}
@@ -612,7 +613,7 @@ main{
     border: 1px solid #000000;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     width: 100%;
-    max-width: 25rem;
+    max-width: 30rem;
 
     justify-content: center;
 
@@ -773,8 +774,8 @@ main{
 .modal-backdrop{
   margin: 1rem auto;
   background-color: #FFFFFF;
-  width: 35%;
-  max-width: 70rem;
+  width: 90%;
+  max-width: 25rem;
   border-radius: 1rem;
   display: flex;
   justify-content: center;
