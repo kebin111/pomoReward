@@ -229,7 +229,7 @@ let breakTime = $state(false);
 let interval;
 let startTime = null;
 let pausedTime = 0;
-let totalDuration = $derived((workMin * 60 + seconds) * 1000); // in milliseconds
+let totalDuration = 0; // in milliseconds, will be set when timer starts
 
 let formattedTime = $derived(String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0'));
 
@@ -276,6 +276,7 @@ export function startTimer() {
     if (startTime === null) {
       // Starting fresh
       const currentDuration = breakTime ? breakMin : workMin;
+      totalDuration = currentDuration * 60 * 1000; // <-- moved calculation here
       startTime = Date.now();
       pausedTime = 0;
     } else {
@@ -283,7 +284,7 @@ export function startTimer() {
       startTime = Date.now();
     }
 
-    interval = setInterval(updateTimer, 100); // Update every 100ms for smoother display
+    interval = setInterval(updateTimer, 200); // update every 200ms (less CPU)
 }
 
 export function pauseTimer() {
@@ -306,6 +307,7 @@ export function resetTimer() {
     breakTime = false;
     startTime = null;
     pausedTime = 0;
+    totalDuration = 0;
     
     resetPuzzle();
 }
@@ -313,8 +315,8 @@ export function resetTimer() {
 export function getTimerRunning(){
     return timerRunning;
 }
-
 </script>
+
 
    <h2>{modeText}</h2>
      
